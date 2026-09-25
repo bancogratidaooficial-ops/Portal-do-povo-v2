@@ -1,0 +1,26 @@
+<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>V86 FILMES - Portal do Povo</title>
+<style>body{background:#000;color:#fff;font-family:Arial;text-align:center;padding:10px}video{width:100%;height:260px;background:#000;border:2px solid #FFD700;border-radius:12px}button{width:100%;padding:13px;border-radius:10px;border:none;font-weight:900;margin-top:7px;cursor:pointer}.tv{background:#e50914;color:#fff}.add{background:#FFD700;color:#000}.voltar{background:#111;color:#FFD700;border:1px solid #FFD700}.mini{background:#222;color:#fff;font-size:11px;padding:8px}.item{display:flex;align-items:center;gap:8px;padding:8px;background:#151515;margin:6px 0;border-radius:10px;text-align:left}.lixeira{margin-left:auto;background:red;color:#fff;padding:6px 10px;border-radius:6px}</style></head>
+<body><h2 style="color:#FFD700">📺 V86 FILMES - Portal do Povo</h2><video id="p" controls playsinline></video><div id="n" style="color:#FFD700;margin:6px">Nenhum vídeo</div>
+<button class="tv" onclick="mandar()">📺 MANDAR PRA TV - AIRSCREEN</button>
+<button class="add" onclick="document.getElementById('f').click()">➕ ADD FILME DO CELULAR</button>
+<input type="file" id="f" accept="video/*" multiple style="display:none">
+<div id="l"></div>
+<hr style="margin:15px 0;opacity:0.2">
+<button class="mini" onclick="backup()">💾 BACKUP LISTA</button>
+<button class="mini" onclick="document.getElementById('r').click()">♻️ RESTAURAR BACKUP</button>
+<input type="file" id="r" style="display:none">
+<button class="mini" onclick="resetar()" style="background:#500">🗑️ RESETAR TUDO</button>
+<br><br><a href="index.html"><button class="voltar">◀️ VOLTAR PRO PORTAL DO POVO</button></a>
+<script>
+let filmes=[],idx=0,player=document.getElementById('p'),nome=document.getElementById('n'),lista=document.getElementById('l'),db,req=indexedDB.open('V86_PORTAL_POVO_FINAL',1);
+req.onupgradeneeded=e=>e.target.result.createObjectStore('filmes',{keyPath:'id',autoIncrement:true});
+req.onsuccess=e=>{db=e.target.result;carregar()};
+function carregar(){let tx=db.transaction('filmes','readonly').objectStore('filmes').getAll();tx.onsuccess=e=>{filmes=e.target.result;montar();if(filmes.length)tocar(0)}}
+document.getElementById('f').onchange=e=>{for(let f of e.target.files){let tx=db.transaction('filmes','readwrite');tx.objectStore('filmes').add({nome:f.name,blob:f})}setTimeout(carregar,500)};
+function montar(){lista.innerHTML='';filmes.forEach((f,i)=>{let d=document.createElement('div');d.className='item';let u=URL.createObjectURL(f.blob);d.innerHTML=`<video src="${u}" muted style="width:60px;height:40px;border:none"></video><div style="flex:1;font-size:12px" onclick="tocar(${i})">${f.nome}</div><button class="lixeira" onclick="apagar(${f.id})">🗑️</button>`;lista.appendChild(d)})}
+function tocar(i){idx=i;let f=filmes[i];if(!f)return;let u=URL.createObjectURL(f.blob);player.src=u;nome.innerText=f.nome;player.play()}
+function apagar(id){if(!confirm('Apagar este vídeo?'))return;db.transaction('filmes','readwrite').objectStore('filmes').delete(id).onsuccess=carregar}
+function mandar(){if(!filmes[idx])return alert('Adicione vídeo');if(player.remote)player.remote.prompt();else alert('Toca o vídeo > 3 pontinhos > Transmitir > AS-TVBOX')}
+function backup(){let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(filmes.map(f=>f.nome))],{type:'application/json'}));a.download='backup_portal.json';a.click()}
+function resetar(){if(confirm('Apagar TUDO?')){db.transaction('filmes','readwrite').objectStore('filmes').clear().onsuccess=carregar}}
+</script></body></html>
