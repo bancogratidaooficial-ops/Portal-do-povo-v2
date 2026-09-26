@@ -1,0 +1,20 @@
+<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Mapas - Portal do Povo</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>body{background:#0a0a0a;color:#fff;font-family:Arial;margin:0;padding:10px}h2{color:#FFD700;text-align:center}#map{height:380px;width:100%;border-radius:12px;border:2px solid #FFD700}input,button{width:100%;padding:12px;border-radius:8px;border:none;margin:5px 0}button{background:#FFD700;color:#000;font-weight:900}.item{background:#151515;padding:10px;border-radius:8px;margin:5px 0;display:flex;justify-content:space-between}.lixeira{background:red;color:#fff;padding:5px 10px;border-radius:5px;width:auto}a{color:#FFD700;display:block;text-align:center;margin-top:10px}</style></head>
+<body><h2>🗺️ MAPAS - PORTAL DO POVO</h2>
+<input id="busca" placeholder="Buscar ex: Curitiba, Shopping, Hospital">
+<button onclick="buscar()">🔍 BUSCAR NO MAPA</button>
+<div id="map"></div>
+<div id="lista"></div>
+<button onclick="backup()" style="background:#222;color:#fff">💾 BACKUP LOCAIS</button>
+<button onclick="resetar()" style="background:#500;color:#fff">🗑️ RESETAR LOCAIS</button>
+<a href="index.html">◀️ VOLTAR PRO PORTAL DO POVO</a>
+<script>
+let map=L.map('map').setView([-25.4290,-49.2671],12);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+let locais=JSON.parse(localStorage.getItem('mapas_portal')||'[]');let marcadores=[];
+function render(){let l=document.getElementById('lista');l.innerHTML='';marcadores.forEach(m=>map.removeLayer(m));marcadores=[];locais.forEach((loc,i)=>{let mk=L.marker([loc.lat,loc.lon]).addTo(map).bindPopup(loc.nome);marcadores.push(mk);l.innerHTML+=`<div class="item"><span>📍 ${loc.nome}</span><button class="lixeira" onclick="apagar(${i})">🗑️</button></div>`});localStorage.setItem('mapas_portal',JSON.stringify(locais))}
+async function buscar(){let q=document.getElementById('busca').value;if(!q)return alert('Digite');let r=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`);let d=await r.json();if(!d[0])return alert('Não achou');let loc={nome:q,lat:d[0].lat,lon:d[0].lon};locais.push(loc);map.setView([loc.lat,loc.lon],15);render()}
+function apagar(i){locais.splice(i,1);render()}
+function backup(){let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(locais)],{type:'application/json'}));a.download='backup_mapas.json';a.click()}
+function resetar(){if(confirm('Apagar todos locais?')){locais=[];render()}}render();
+</script></body></html>
