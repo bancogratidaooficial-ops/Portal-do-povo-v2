@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portal do Povo - Banco Gratidão</title>
+<link rel="icon" href="icone-marcos.png">
+<meta name="theme-color" content="#ffcc00">
+<style>
+*{box-sizing:border-box} body{margin:0;background:#0a0a0a;color:#fff;font-family:Arial;padding:10px}
+header{text-align:center;padding:15px;background:#111;border-bottom:2px solid #ffcc00;border-radius:12px;margin-bottom:10px}
+h1{color:#ffcc00;margin:0;font-size:22px} p.sub{color:#aaa;margin:5px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card-app{display:block;padding:18px;border-radius:14px;text-align:center;font-weight:bold;text-decoration:none;color:#000;transition:.2s}
+.card-app:active{transform:scale(0.95)}
+.card-app small{display:block;font-weight:normal;margin-top:4px;font-size:11px;color:#222}
+.tag-novo{background:#ff00ff;color:#fff;font-size:10px;padding:2px 6px;border-radius:20px;margin-left:5px}
+</style>
+</head>
+<body>
+<header>
+<h1>📋 PORTAL DO POVO</h1>
+<p class="sub">Banco Gratidão Oficial - Toque para abrir</p>
+<p class="sub" id="status" style="color:#ffcc00">Carregando apps...</p>
+</header>
+
+<div class="grid" id="grid"></div>
+
+<script>
+// CONFIG - EDITA AQUI SE QUISER MUDAR COR/NOME
+const APPS_FIXOS = [
+  {file:"bancos.html", nome:"🏦 Bancos", cor:"#ffcc00"},
+  {file:"gastos.html", nome:"💸 Gastos", cor:"#ffcc00"},
+  {file:"dividas.html", nome:"📋 Dívidas", cor:"#ffcc00", novo:true},
+  {file:"glitch.html", nome:"✨ Glitch", cor:"#ff00ff", novo:true},
+  {file:"mensagens.html", nome:"💬 Mensagens", cor:"#00ffff"},
+  {file:"mapas.html", nome:"🗺️ Mapas", cor:"#00ff88"},
+  {file:"musicas.html", nome:"🎵 Músicas", cor:"#ff8800"},
+  {file:"video.html", nome:"🎬 Vídeo", cor:"#ff4444"},
+  {file:"tesoura.html", nome:"✂️ Tesoura", cor:"#aaaaff"},
+  {file:"redes.html", nome:"📱 Redes", cor:"#0088ff"},
+  {file:"contato.html", nome:"📞 Contato", cor:"#ffffff"},
+];
+
+const REPO_OWNER = "bancogratidaooficial-ops";
+const REPO_NAME = "bancogratidaooficial-ops.github.io"; // SE NÃO FOR ESSE, MUDA AQUI: olha no link do seu github
+
+function render(apps){
+  const grid = document.getElementById('grid');
+  grid.innerHTML = "";
+  apps.forEach(app=>{
+    if(!app.file.endsWith('.html') || ["index.html","privacidade.html","termos.html","sobre.html"].includes(app.file)) return;
+    const cor = app.cor || "#ffcc00";
+    const novo = app.novo ? `<span class="tag-novo">NOVO</span>` : "";
+    grid.innerHTML += `<a href="${app.file}" class="card-app" style="background:${cor}">${app.nome} ${novo}<small>${app.file}</small></a>`;
+  });
+  document.getElementById('status').innerText = `${apps.length} apps encontrados - só criar .html novo que aparece!`;
+}
+
+// 1. Mostra os fixos primeiro (rápido)
+render(APPS_FIXOS);
+
+// 2. Tenta buscar AUTOMATICO todos os .html do seu GitHub
+fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/`)
+.then(r=>r.json())
+.then(files=>{
+  if(!Array.isArray(files)) throw "erro";
+  let autoApps = files.filter(f=>f.name.endsWith('.html')).map(f=>{
+    let fixo = APPS_FIXOS.find(a=>a.file==f.name);
+    if(fixo) return fixo;
+    // app novo que você criou e não tá na lista fixa - cria automaticamente
+    return {file:f.name, nome:"📄 " + f.name.replace('.html','').toUpperCase(), cor:"#333", novo:true};
+  });
+  render(autoApps);
+  document.getElementById('status').innerText = `✅ AUTOMÁTICO: ${autoApps.length} apps`;
+})
+.catch(e=>{
+  document.getElementById('status').innerText = `Modo offline - ${APPS_FIXOS.length} apps fixos`;
+});
+</script>
+</body>
+</html>
