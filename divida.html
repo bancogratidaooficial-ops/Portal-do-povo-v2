@@ -1,0 +1,26 @@
+<!DOCTYPE html><html lang="pt-BR"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dívidas - Portal do Povo</title>
+<style>body{margin:0;background:#0a0a0a;color:#fff;font-family:Arial;padding:10px}
+.cards{display:flex;gap:6px;margin:10px 0}.card{flex:1;background:#1e1e1e;border:1px solid #333;border-radius:12px;padding:10px;text-align:center}
+.box{background:#151515;border:1px solid #333;border-radius:14px;padding:10px;margin-bottom:10px}
+input,select{width:100%;background:#2a2a2a;border:1px solid #444;color:#fff;padding:12px;border-radius:10px;margin:5px 0;box-sizing:border-box}
+.btn{border:none;width:100%;padding:14px;border-radius:10px;font-weight:bold}.btn-yellow{background:#ffcc00;color:#000}.btn-red{background:#ff4444;color:#fff}.btn-green{background:#00c853;color:#fff}
+.devedor{padding:12px;border-radius:12px;margin:6px 0;background:#222;border:1px solid #333;display:flex;justify-content:space-between}.devedor.ativo{border-color:#ffcc00;background:#332e00}
+.item{background:#222;padding:10px;border-radius:8px;margin:5px 0;display:flex;justify-content:space-between;border-left:4px solid #ffcc00}
+a.voltar{color:#ffcc00;text-decoration:none}</style></head><body>
+<a class="voltar" href="index.html">← Voltar pro Portal</a>
+<h2 style="color:#ffcc00;text-align:center">📋 CONTROLE DE DÍVIDAS</h2>
+<div class="box"><input id="novoDevedor" placeholder="Nome do devedor..."><button class="btn btn-yellow" onclick="addDevedor()">+ ADICIONAR DEVEDOR</button><div id="listaDevedores"></div></div>
+<div id="areaControle" style="display:none"><div class="cards"><div class="card">TOTAL<div id="totalDivida" style="color:#ffcc00;font-size:20px;font-weight:bold">0,00</div></div><div class="card">RECEBIDO<div id="totalRecebido" style="color:#00ff88;font-size:20px;font-weight:bold">0,00</div></div><div class="card">FALTA<div id="totalFalta" style="color:#ff4444;font-size:20px;font-weight:bold">0,00</div></div></div>
+<div class="box"><b id="tituloDev"></b><select id="tipo" onchange="trocaTipo()"><option value="divida">➕ ADICIONAR DÍVIDA</option><option value="recebido">✅ RECEBI</option></select><input id="desc" placeholder="O que foi?"><input id="valor" type="number" placeholder="Valor R$"><input id="data" type="date"><button class="btn btn-red" id="btnSalvar" onclick="salvar()">+ ADICIONAR NA DÍVIDA</button></div><div class="box" id="lista"></div></div>
+<script>
+let db=JSON.parse(localStorage.getItem('portalPovoDividas')||'{"devedores":[{"nome":"Marcos","lancs":[{"tipo":"divida","desc":"Serviços gerais","valor":1570,"data":"05/05/2026"},{"tipo":"recebido","desc":"Recebimento","valor":150,"data":"16/09/2026"}]}],"atual":"Marcos"}');
+function addDevedor(){let n=novoDevedor.value.trim();if(!n)return;if(!db.devedores.find(d=>d.nome==n))db.devedores.push({nome:n,lancs:[]});db.atual=n;novoDevedor.value='';save();renderAll()}
+function selectDev(n){db.atual=n;save();renderAll()}function delDev(n){if(confirm('Apagar '+n+'?')){db.devedores=db.devedores.filter(d=>d.nome!=n);if(db.atual==n)db.atual=null;save();renderAll()}}
+function save(){localStorage.setItem('portalPovoDividas',JSON.stringify(db))}function trocaTipo(){if(tipo.value=='divida'){btnSalvar.className='btn btn-red';btnSalvar.innerText='+ ADICIONAR NA DÍVIDA'}else{btnSalvar.className='btn btn-green';btnSalvar.innerText='✅ SALVAR RECEBIMENTO'}}
+function renderAll(){listaDevedores.innerHTML='';db.devedores.forEach(d=>{let t=d.lancs.filter(l=>l.tipo=='divida').reduce((s,x)=>s+x.valor,0);let r=d.lancs.filter(l=>l.tipo=='recebido').reduce((s,x)=>s+x.valor,0);let a=db.atual==d.nome?'ativo':'';listaDevedores.innerHTML+=`<div class="devedor ${a}" onclick="selectDev('${d.nome}')"><div><b>${d.nome}</b><br><small>Falta R$ ${(t-r).toFixed(2)}</small></div><button onclick="event.stopPropagation();delDev('${d.nome}')" style="background:none;border:none;color:#f44">X</button></div>`});if(db.atual){areaControle.style.display='block';tituloDev.innerText='DÍVIDA - '+db.atual;if(!data.value)data.valueAsDate=new Date();renderLanc()}else areaControle.style.display='none';trocaTipo()}
+function salvar(){let d=db.devedores.find(x=>x.nome==db.atual);let v=parseFloat(valor.value);if(!v)return;d.lancs.unshift({tipo:tipo.value,desc:desc.value||'Lançamento',valor:v,data:data.value||new Date().toLocaleDateString()});valor.value='';desc.value='';save();renderAll()}
+function excluir(i){db.devedores.find(x=>x.nome==db.atual).lancs.splice(i,1);save();renderAll()}
+function renderLanc(){let d=db.devedores.find(x=>x.nome==db.atual);let rec=0,adi=0;lista.innerHTML='';d.lancs.forEach((l,i)=>{if(l.tipo=='recebido')rec+=l.valor;else adi+=l.valor;let cor=l.tipo=='recebido'?'#00ff88':'#ff4444';lista.innerHTML+=`<div class="item" style="border-left-color:${cor}"><div><b style="color:${cor}">R$ ${l.valor.toFixed(2)}</b> - ${l.desc}</div><button onclick="excluir(${i})" style="background:#333;border:none;color:#f44;padding:5px 10px;border-radius:6px">X</button></div>`});totalDivida.innerText=adi.toFixed(2);totalRecebido.innerText=rec.toFixed(2);totalFalta.innerText=(adi-rec).toFixed(2)}renderAll();
+</script></body></html>
