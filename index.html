@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portal do Povo - Banco Gratidão</title>
+<link rel="icon" href="icone-marcos.png">
+<meta name="theme-color" content="#ffcc00">
+<style>
+*{box-sizing:border-box} body{margin:0;background:#0a0a0a;color:#fff;font-family:Arial;padding:10px}
+header{text-align:center;padding:15px;background:#111;border-bottom:2px solid #ffcc00;border-radius:12px;margin-bottom:12px}
+h1{color:#ffcc00;margin:0;font-size:22px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.app{padding:16px;border-radius:14px;text-align:center;font-weight:bold;text-decoration:none;display:block}
+.app small{display:block;font-weight:normal;margin-top:4px;opacity:0.7;font-size:11px}
+</style>
+</head>
+<body>
+<header>
+<h1>📋 PORTAL DO POVO</h1>
+<div style="color:#aaa;font-size:13px">Banco Gratidão Oficial - Toque para abrir</div>
+<div style="color:#00ff88;margin-top:6px" id="info"></div>
+</header>
+
+<div class="grid" id="grid"></div>
+
+<script>
+// PRA ADICIONAR UM APP NOVO, É SÓ ADICIONAR 1 LINHA AQUI EMBAIXO:
+const MEUS_APPS = [
+  {file:"bancos.html", nome:"🏦 Bancos", bg:"#ffcc00", cor:"#000"},
+  {file:"gastos.html", nome:"💸 Gastos", bg:"#ffcc00", cor:"#000"},
+  {file:"dividas.html", nome:"📋 DÍVIDAS", bg:"#ffcc00", cor:"#000"},
+  {file:"glitch.html", nome:"✨ GLITCH", bg:"#ff00ff", cor:"#fff"},
+  {file:"mensagens.html", nome:"💬 Mensagens", bg:"#00ffff", cor:"#000"},
+  {file:"mapas.html", nome:"🗺️ Mapas", bg:"#00ff88", cor:"#000"},
+  {file:"musicas.html", nome:"🎵 Músicas", bg:"#ff8800", cor:"#fff"},
+  {file:"video.html", nome:"🎬 Vídeo", bg:"#ff4444", cor:"#fff"},
+  {file:"tesoura.html", nome:"✂️ Tesoura", bg:"#8888ff", cor:"#fff"},
+  {file:"redes.html", nome:"📱 Redes", bg:"#0088ff", cor:"#fff"},
+  {file:"contato.html", nome:"📞 Contato", bg:"#ffffff", cor:"#000"},
+  {file:"sobre.html", nome:"ℹ️ Sobre", bg:"#222", cor:"#fff"},
+];
+
+const grid = document.getElementById('grid');
+MEUS_APPS.forEach(a=>{
+  grid.innerHTML += `<a href="${a.file}" class="app" style="background:${a.bg};color:${a.cor}">${a.nome}<small>${a.file}</small></a>`;
+});
+document.getElementById('info').innerText = `✅ ${MEUS_APPS.length} apps ativos - Dívidas e Glitch já dentro!`;
+</script>
+</body>
+</html>
