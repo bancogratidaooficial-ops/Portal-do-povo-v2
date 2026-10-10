@@ -1,151 +1,26 @@
-<!DOCTYPE html>
-<html lang="pt-BR"><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>Controle de Dívidas - Marcos</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#ffcc00">
-<style>
-body{margin:0;background:#0a0a0a;color:#fff;font-family:Arial;padding:12px;padding-bottom:160px}
-h1{color:#ffcc00;text-align:center;margin:8px 0 2px}
-.sub{text-align:center;color:#aaa;margin-bottom:10px;font-size:12px}
-.cards{display:flex;gap:6px;margin-bottom:10px}
-.card{flex:1;background:#1e1e1e;border:1px solid #333;border-radius:12px;padding:8px;text-align:center;font-size:13px}
-.saldo{color:#ffcc00;font-size:20px;font-weight:bold}.entradas{color:#00ff88;font-size:20px;font-weight:bold}.saidas{color:#ff4444;font-size:20px;font-weight:bold}
+<!DOCTYPE html><html lang="pt-BR"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dívidas - Portal do Povo</title>
+<style>body{margin:0;background:#0a0a0a;color:#fff;font-family:Arial;padding:10px}
+.cards{display:flex;gap:6px;margin:10px 0}.card{flex:1;background:#1e1e1e;border:1px solid #333;border-radius:12px;padding:10px;text-align:center}
 .box{background:#151515;border:1px solid #333;border-radius:14px;padding:10px;margin-bottom:10px}
-input,select{width:100%;padding:12px;border:1px solid #444;color:#fff;background:#2a2a2a;border-radius:10px;margin:5px 0;box-sizing:border-box}
-.btn{border:none;width:100%;padding:13px;border-radius:12px;font-weight:bold;margin-top:5px;cursor:pointer}
-.btn-yellow{background:#ffcc00;color:#000}.btn-red{background:#ff4444;color:#fff}.btn-green{background:#00c853;color:#fff}.btn-blue{background:#2196f3;color:#fff}
-.devedor{padding:10px;border-radius:12px;margin:5px 0;background:#222;border:1px solid #333;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
-.devedor.ativo{border-color:#ffcc00;background:#332e00}
-.item{background:#222;padding:10px;border-radius:10px;margin:5px 0;display:flex;justify-content:space-between;border-left:4px solid #ffcc00}
-.item.ok{border-left-color:#00ff88;opacity:.8}
-.item.ok b{text-decoration:line-through}
-.linha{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-#btnInstalar{display:none;background:#ffcc00;color:#000;position:fixed;bottom:15px;left:12px;right:12px;padding:16px;border-radius:16px;font-weight:900;z-index:5000;box-shadow:0 0 20px #ffcc00;animation:pulse 2s infinite}
-@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
-.share-box{background:linear-gradient(135deg,#1a1a00,#332e00);border:2px solid #ffcc00;border-radius:14px;padding:12px;margin-top:10px}
-</style>
-</head><body>
-<h1>💰 CONTROLE DE DÍVIDAS</h1>
-<div class="sub">Banco Gratidão - Para receber do Marcos</div>
-
-<div class="box">
-<input id="novoDevedor" placeholder="Nome do devedor... ex: Marcos">
-<button class="btn btn-yellow" onclick="addDevedor()">+ ADICIONAR DEVEDOR</button>
-<div id="listaDevedores"></div>
-</div>
-
-<div id="areaControle" style="display:none">
-<div class="cards">
-<div class="card">TOTAL<br><div id="totalDivida" class="saldo">0,00</div></div>
-<div class="card">RECEBIDO<br><div id="totalRecebido" class="entradas">0,00</div></div>
-<div class="card">FALTA<br><div id="totalFalta" class="saidas">0,00</div></div>
-</div>
-
-<div class="box">
-<b id="tituloDev"></b>
-<select id="tipo" onchange="trocaTipo()">
-<option value="divida">💸 ADICIONAR DÍVIDA - O que ele deve</option>
-<option value="recebido">✅ RECEBI - Pagamento</option>
-</select>
-<input id="desc" placeholder="O que foi? Ex: empréstimo, produto...">
-<input id="valor" type="number" placeholder="Valor R$">
-<input id="data" type="date">
-<button class="btn btn-red" id="btnSalvar" onclick="salvar()">+ ADICIONAR NA DÍVIDA</button>
-<div id="lista"></div>
-</div>
-
-<div class="box">
-<div class="linha">
-<button class="btn btn-green" onclick="fazerBackup()">💾 BACKUP</button>
-<button class="btn btn-blue" onclick="document.getElementById('file').click()">♻️ RESTAURAR</button>
-</div>
-<input type="file" id="file" accept=".json" style="display:none">
-<button class="btn btn-yellow" onclick="recuperarAntigo()">🔄 RECUPERAR ANTIGO</button>
-<button class="btn" style="background:#222;color:#ff4444;border:1px solid #ff4444" onclick="zerarTudo()">🗑️ ZERAR TUDO</button>
-
-<div class="share-box">
-<b style="color:#ffcc00">💰 GANHE INDICANDO</b><br>
-<small>Compartilhe e ganhe comissão no PIX</small>
-<div class="linha" style="margin-top:8px">
-<button class="btn btn-yellow" onclick="compartilharApp()">🔗 COMPARTILHAR APP</button>
-<button class="btn btn-green" onclick="convidarZap()">📲 CONVIDAR NO ZAP</button>
-</div>
-<p style="font-size:11px;opacity:.7;margin:6px 0 0">Seu link: bancogratidaooficial-ops.github.io/Controle-de-D-vidas-/</p>
-</div>
-
-<div id="aviso" style="display:none;background:#00c853;color:#fff;padding:10px;border-radius:8px;margin-top:8px;text-align:center"></div>
-</div>
-</div>
-
-<!-- BOTÃO INSTALAR -->
-<button id="btnInstalar" onclick="instalarApp()">📲 INSTALAR APP NO CELULAR</button>
-
+input,select{width:100%;background:#2a2a2a;border:1px solid #444;color:#fff;padding:12px;border-radius:10px;margin:5px 0;box-sizing:border-box}
+.btn{border:none;width:100%;padding:14px;border-radius:10px;font-weight:bold}.btn-yellow{background:#ffcc00;color:#000}.btn-red{background:#ff4444;color:#fff}.btn-green{background:#00c853;color:#fff}
+.devedor{padding:12px;border-radius:12px;margin:6px 0;background:#222;border:1px solid #333;display:flex;justify-content:space-between}.devedor.ativo{border-color:#ffcc00;background:#332e00}
+.item{background:#222;padding:10px;border-radius:8px;margin:5px 0;display:flex;justify-content:space-between;border-left:4px solid #ffcc00}
+a.voltar{color:#ffcc00;text-decoration:none}</style></head><body>
+<a class="voltar" href="index.html">← Voltar pro Portal</a>
+<h2 style="color:#ffcc00;text-align:center">📋 CONTROLE DE DÍVIDAS</h2>
+<div class="box"><input id="novoDevedor" placeholder="Nome do devedor..."><button class="btn btn-yellow" onclick="addDevedor()">+ ADICIONAR DEVEDOR</button><div id="listaDevedores"></div></div>
+<div id="areaControle" style="display:none"><div class="cards"><div class="card">TOTAL<div id="totalDivida" style="color:#ffcc00;font-size:20px;font-weight:bold">0,00</div></div><div class="card">RECEBIDO<div id="totalRecebido" style="color:#00ff88;font-size:20px;font-weight:bold">0,00</div></div><div class="card">FALTA<div id="totalFalta" style="color:#ff4444;font-size:20px;font-weight:bold">0,00</div></div></div>
+<div class="box"><b id="tituloDev"></b><select id="tipo" onchange="trocaTipo()"><option value="divida">➕ ADICIONAR DÍVIDA</option><option value="recebido">✅ RECEBI</option></select><input id="desc" placeholder="O que foi?"><input id="valor" type="number" placeholder="Valor R$"><input id="data" type="date"><button class="btn btn-red" id="btnSalvar" onclick="salvar()">+ ADICIONAR NA DÍVIDA</button></div><div class="box" id="lista"></div></div>
 <script>
-let chaveFixa='plugtv_DIVIDAS_FINAL_UNICO_V2';
-let db; try{let atual=localStorage.getItem(chaveFixa); if(atual){db=JSON.parse(atual)} else{let antigo=localStorage.getItem('controleDividasPRO2')||localStorage.getItem('controleDividasPRO')||localStorage.getItem('dividas'); if(antigo) db=JSON.parse(antigo); else db={devedores:[]}}}catch(e){db={devedores:[]}}
-if(!db.devedores) db={devedores:[]};
-let devAtual=null;
-
-function aviso(txt){let d=document.getElementById('aviso');d.style.display='block';d.innerText=txt;setTimeout(()=>d.style.display='none',3000)}
-function save(){localStorage.setItem(chaveFixa,JSON.stringify(db));localStorage.setItem('controleDividasPRO2',JSON.stringify(db));renderDevs();renderLanc()}
-
-function addDevedor(){let n=document.getElementById('novoDevedor').value.trim();if(!n)return;if(db.devedores.find(d=>d.nome.toLowerCase()==n.toLowerCase())){selectDev(n);return} db.devedores.push({nome:n,dividas:[]});document.getElementById('novoDevedor').value='';save();selectDev(n)}
-function selectDev(n){devAtual=n;save()}
-function trocaTipo(){let t=document.getElementById('tipo').value;let btn=document.getElementById('btnSalvar');if(t=='recebido'){btn.innerText='✅ CONFIRMAR RECEBIMENTO';btn.className='btn btn-green'}else{btn.innerText='+ ADICIONAR NA DÍVIDA';btn.className='btn btn-red'}}
-function salvar(){let desc=document.getElementById('desc').value.trim();let valor=parseFloat(document.getElementById('valor').value);let data=document.getElementById('data').value||new Date().toISOString().slice(0,10);if(!devAtual)return aviso('Selecione um devedor');if(!valor)return aviso('Valor');let dev=db.devedores.find(d=>d.nome==devAtual);if(!dev)return;dev.dividas.push({id:Date.now(),desc:desc|| (document.getElementById('tipo').value=='recebido'?'Pagamento':'Dívida'),valor:valor,data:data,tipo:document.getElementById('tipo').value});document.getElementById('desc').value='';document.getElementById('valor').value='';save()}
-function renderDevs(){let div=document.getElementById('listaDevedores');div.innerHTML='';db.devedores.forEach(d=>{let total=0,receb=0;d.dividas.forEach(l=>{if(l.tipo=='recebido') receb+=l.valor; else total+=l.valor});let falta=total-receb;let el=document.createElement('div');el.className='devedor'+(d.nome==devAtual?' ativo':'');el.innerHTML=`<span><b>${d.nome}</b><br><small>Falta: R$ ${falta.toFixed(2)}</small></span><span onclick="excluirDev('${d.nome}')" style="color:#ff4444">🗑️</span>`;el.onclick=(e)=>{if(e.target.innerText!='🗑️') selectDev(d.nome)};div.appendChild(el)})}
-function renderLanc(){if(!devAtual){document.getElementById('areaControle').style.display='none';return}document.getElementById('areaControle').style.display='block';let dev=db.devedores.find(d=>d.nome==devAtual);if(!dev)return;document.getElementById('tituloDev').innerText='📒 '+dev.nome;let total=0,receb=0;dev.dividas.forEach(l=>{if(l.tipo=='recebido') receb+=l.valor; else total+=l.valor});document.getElementById('totalDivida').innerText='R$ '+total.toFixed(2);document.getElementById('totalRecebido').innerText='R$ '+receb.toFixed(2);document.getElementById('totalFalta').innerText='R$ '+(total-receb).toFixed(2);let lista=document.getElementById('lista');lista.innerHTML='';dev.dividas.slice().reverse().forEach(l=>{let div=document.createElement('div');div.className='item'+(l.tipo=='recebido'?' ok':'');div.innerHTML=`<div><b>${l.desc}</b><br><small>${l.data} - R$ ${l.valor.toFixed(2)}</small></div><span onclick="apagarLanc(${l.id})" style="color:#ff4444;cursor:pointer">✕</span>`;lista.appendChild(div)})}
-function apagarLanc(id){if(!confirm('Excluir?')) return;let dev=db.devedores.find(d=>d.nome==devAtual);if(!dev)return;dev.dividas=dev.dividas.filter(x=>x.id!=id);save()}
-function excluirDev(nome){if(!confirm('Excluir devedor '+nome+' e todas as dívidas?')) return;db.devedores=db.devedores.filter(d=>d.nome!=nome);if(devAtual==nome) devAtual=null;save()}
-function zerarTudo(){if(!confirm('APAGAR TUDO MESMO? Faça backup antes!')) return;if(!confirm('Tem certeza absoluta?')) return;db={devedores:[]};devAtual=null;localStorage.removeItem(chaveFixa);save();aviso('Zerado')}
-function fazerBackup(){let blob=new Blob([JSON.stringify(db)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='backup-dividas-'+new Date().toISOString().slice(0,10)+'.json';a.click()}
-document.getElementById('file').addEventListener('change',function(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=function(ev){try{let dados=JSON.parse(ev.target.result);if(dados.devedores){db=dados;save();aviso('Restaurado com sucesso!')}else throw 0}catch{alert('Arquivo inválido')}};r.readAsText(f)});
-function recuperarAntigo(){for(let i=0;i<localStorage.length;i++){let k=localStorage.key(i);if(k.toLowerCase().includes('divid')||k.toLowerCase().includes('devedor')){try{let v=JSON.parse(localStorage.getItem(k));if(v.devedores||Array.isArray(v)){if(confirm('Recuperar de '+k+'?')){if(Array.isArray(v)) db={devedores:[{nome:'Marcos',dividas:v}]}; else db=v; save(); return}}}}catch(e){}}}alert('Nenhum backup antigo encontrado')}
-
-// MONETIZAÇÃO - COMPARTILHAR E CONVIDAR
-function compartilharApp(){
- let texto=`💰 CONTROLE DE DÍVIDAS - O app que uso pra cobrar quem me deve!
-Organizo tudo por pessoa, sei quem já pagou e quem falta.
-Baixa aqui: https://bancogratidaooficial-ops.github.io/Controle-de-D-vidas-/
-PIX pra liberar: 025.446.319-37 - Só R$ 2,99/semana`;
- if(navigator.share){navigator.share({title:'Controle de Dívidas',text:texto,url:'https://bancogratidaooficial-ops.github.io/Controle-de-D-vidas-/'}).catch(()=>{})}else{navigator.clipboard.writeText(texto);aviso('Texto copiado! Cola no Zap')}
-}
-function convidarZap(){
- let msg=encodeURIComponent(`💰 Olha esse app que uso pra controlar quem me deve: https://bancogratidaooficial-ops.github.io/Controle-de-D-vidas-/\n\nUso pra cobrar o Marcos e outros. Libera com PIX 025.446.319-37 por R$ 2,99 e já uso ilimitado. Instala aí!`);
- window.open('https://wa.me/?text='+msg,'_blank');
-}
-
-// INSTALAR PWA
-let deferredPrompt=null;
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;document.getElementById('btnInstalar').style.display='block'});
-function instalarApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(c=>{if(c.outcome=='accepted') aviso('App instalado!');deferredPrompt=null;document.getElementById('btnInstalar').style.display='none'})}else{aviso('No navegador clique em ⋮ > Instalar app / Adicionar à tela inicial')}}
-
-renderDevs(); renderLanc();
-document.getElementById('data').valueAsDate=new Date();
-</script>
-
-<script>if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(r=>{r.forEach(x=>x.unregister())}); setTimeout(()=>{navigator.serviceWorker.register('sw.js?v='+Date.now())},500)}</script>
-
-<!-- TELA DE BLOQUEIO -->
-<div id="tela-bloqueio" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;display:none;justify-content:center;align-items:center;flex-direction:column;padding:20px;text-align:center">
-<h2 style="color:#ffcc00">💰 CONTROLE DE DÍVIDAS</h2>
-<p style="color:#fff">Digite o código de liberação</p>
-<input id="inputCodigo" placeholder="Ex: GRATI-XXXX" style="padding:12px;width:80%;max-width:300px;margin:10px;border:2px solid #ffcc00;border-radius:10px;background:#111;color:#fff;text-align:center">
-<button onclick="validarCodigo()" style="background:#ffcc00;color:#000;padding:12px 30px;border:none;border-radius:10px;font-weight:900;margin-top:10px">LIBERAR APP</button>
-<p style="color:#aaa;font-size:13px;margin-top:15px;text-align:center">*Não tem código? Chame no WhatsApp<br>PIX: 025.446.319-37 - R$ 2,99/semana<br><a href="https://wa.me/5541988366496" style="color:#00ff88">Clique aqui pra comprar no Zap</a></p>
-</div>
-<script>
-// BLOQUEIO 3 DIAS GRÁTIS + CÓDIGO GRATI
-(function(){
- let ini=localStorage.getItem('inicioTeste'); if(!ini){ini=Date.now(); localStorage.setItem('inicioTeste',ini)}
- let dias=Math.floor((Date.now()-ini)/86400000);
- let cod=localStorage.getItem('codigoLiberado'); let exp=localStorage.getItem('expiraCodigo');
- function liberado(){ if(!cod) return false; if(!exp) return true; return Date.now() < parseInt(exp) }
- function mostrarBloqueio(){ document.getElementById('tela-bloqueio').style.display='flex' }
- window.validarCodigo=function(){ let v=document.getElementById('inputCodigo').value.trim().toUpperCase(); if(!v.startsWith('GRATI-')){alert('Código deve começar com GRATI-');return} let partes=v.split('-'); let diasLib=7; if(partes.length>=3){ let d=parseInt(partes[2]); if(!isNaN(d)) diasLib=d } localStorage.setItem('codigoLiberado',v); localStorage.setItem('expiraCodigo', Date.now()+diasLib*86400000); alert('Liberado por '+diasLib+' dias!'); location.reload() }
- if(dias>=3 &&!liberado()){ mostrarBloqueio() }
-})();
-</script>
-
-</body></html>
+let db=JSON.parse(localStorage.getItem('portalPovoDividas')||'{"devedores":[{"nome":"Marcos","lancs":[{"tipo":"divida","desc":"Serviços gerais","valor":1570,"data":"05/05/2026"},{"tipo":"recebido","desc":"Recebimento","valor":150,"data":"16/09/2026"}]}],"atual":"Marcos"}');
+function addDevedor(){let n=novoDevedor.value.trim();if(!n)return;if(!db.devedores.find(d=>d.nome==n))db.devedores.push({nome:n,lancs:[]});db.atual=n;novoDevedor.value='';save();renderAll()}
+function selectDev(n){db.atual=n;save();renderAll()}function delDev(n){if(confirm('Apagar '+n+'?')){db.devedores=db.devedores.filter(d=>d.nome!=n);if(db.atual==n)db.atual=null;save();renderAll()}}
+function save(){localStorage.setItem('portalPovoDividas',JSON.stringify(db))}function trocaTipo(){if(tipo.value=='divida'){btnSalvar.className='btn btn-red';btnSalvar.innerText='+ ADICIONAR NA DÍVIDA'}else{btnSalvar.className='btn btn-green';btnSalvar.innerText='✅ SALVAR RECEBIMENTO'}}
+function renderAll(){listaDevedores.innerHTML='';db.devedores.forEach(d=>{let t=d.lancs.filter(l=>l.tipo=='divida').reduce((s,x)=>s+x.valor,0);let r=d.lancs.filter(l=>l.tipo=='recebido').reduce((s,x)=>s+x.valor,0);let a=db.atual==d.nome?'ativo':'';listaDevedores.innerHTML+=`<div class="devedor ${a}" onclick="selectDev('${d.nome}')"><div><b>${d.nome}</b><br><small>Falta R$ ${(t-r).toFixed(2)}</small></div><button onclick="event.stopPropagation();delDev('${d.nome}')" style="background:none;border:none;color:#f44">X</button></div>`});if(db.atual){areaControle.style.display='block';tituloDev.innerText='DÍVIDA - '+db.atual;if(!data.value)data.valueAsDate=new Date();renderLanc()}else areaControle.style.display='none';trocaTipo()}
+function salvar(){let d=db.devedores.find(x=>x.nome==db.atual);let v=parseFloat(valor.value);if(!v)return;d.lancs.unshift({tipo:tipo.value,desc:desc.value||'Lançamento',valor:v,data:data.value||new Date().toLocaleDateString()});valor.value='';desc.value='';save();renderAll()}
+function excluir(i){db.devedores.find(x=>x.nome==db.atual).lancs.splice(i,1);save();renderAll()}
+function renderLanc(){let d=db.devedores.find(x=>x.nome==db.atual);let rec=0,adi=0;lista.innerHTML='';d.lancs.forEach((l,i)=>{if(l.tipo=='recebido')rec+=l.valor;else adi+=l.valor;let cor=l.tipo=='recebido'?'#00ff88':'#ff4444';lista.innerHTML+=`<div class="item" style="border-left-color:${cor}"><div><b style="color:${cor}">R$ ${l.valor.toFixed(2)}</b> - ${l.desc}</div><button onclick="excluir(${i})" style="background:#333;border:none;color:#f44;padding:5px 10px;border-radius:6px">X</button></div>`});totalDivida.innerText=adi.toFixed(2);totalRecebido.innerText=rec.toFixed(2);totalFalta.innerText=(adi-rec).toFixed(2)}renderAll();
+</script></body></html>
