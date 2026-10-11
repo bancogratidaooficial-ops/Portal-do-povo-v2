@@ -1,96 +1,44 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<!-- CÓDIGO ADSENSE - COLE SEU CÓDIGO REAL AQUI EMBAIXO -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXX" crossorigin="anonymous"></script>
-<!-- FIM ADSENSE -->
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Portal - Banco Gratidão</title>
-<style>
-body{margin:0;background:#0a0a0a;color:#fff;font-family:Arial;padding:10px}
-header{text-align:center;background:#111;border:2px solid #ffcc00;margin:0;padding:10px;border-radius:12px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.card{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:12px;text-align:center}
-.card b{display:block;margin-top:6px}
-.btn{padding:8px 12px;border-radius:8px;border:none;font-weight:bold;margin:4px}
-</style>
-</head>
-<body>
-<header>
-<h1 style="color:#ffcc00;margin:0">📋 MEU PORTAL - BANCO GRATIDÃO</h1>
-<div class="topBtns" style="margin-top:10px">
-<button onclick="novoApp()" style="background:#00ff88;color:#000" class="btn">+ NOVO APP</button>
-<button onclick="compartilhar()" style="background:#00aaff;color:#fff" class="btn">Compartilhar</button>
-<button onclick="convidar()" style="background:#ffcc00;color:#000" class="btn">Convidar</button>
-<button onclick="backup()" style="background:#8888ff;color:#fff" class="btn">Backup</button>
-<button onclick="document.getElementById('f').click()" style="background:#fff;color:#000" class="btn">Restaurar</button>
-<button onclick="if(confirm('Limpar duplicados com maiúsculas?')){localStorage.clear();location.reload();}" style="background:#ff4444;color:#fff" class="btn">Limpar</button>
-<input type="file" id="f" style="display:none" onchange="restaurar(this)">
-</div>
-</header>
-
+<!DOCTYPE html><html lang="pt-BR"><head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2263470788888608" crossorigin="anonymous"></script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Portal - Corrigido Maiúsculas</title>
+<style>body{margin:0;background:#0a0a0a;color:#fff;font-family:Arial;padding:10px}header{text-align:center;background:#111;border:2px solid #ffcc00;border-radius:14px;padding:12px;margin-bottom:10px}.topBtns{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:10px}.topBtns button{padding:10px;border-radius:10px;border:none;font-weight:bold;font-size:12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card{background:#1a1a1a;border-radius:14px;padding:14px;text-align:center;position:relative;border:1px solid #222}.del{position:absolute;top:6px;right:6px;background:#ff4444;color:#fff;border:none;border-radius:50%;width:26px;height:26px}.btn{width:100%;padding:11px;border-radius:10px;border:none;font-weight:bold;margin-top:6px}</style></head><body>
+<header><h1 style="color:#ffcc00;margin:0">📋 MEU PORTAL - BANCO GRATIDÃO</h1><div class="topBtns">
+<button onclick="novoApp()" style="background:#00ff88;color:#000">+ NOVO APP</button>
+<button onclick="compartilhar()" style="background:#00aaff;color:#fff">📤 Compartilhar</button>
+<button onclick="convidar()" style="background:#ffcc00;color:#000">👥 Convidar</button>
+<button onclick="backup()" style="background:#8888ff;color:#fff">💾 Backup</button>
+<button onclick="document.getElementById('f').click()" style="background:#fff;color:#000">♻️ Restaurar</button>
+<button onclick="if(confirm('Limpar duplicados com maiúscula?')){localStorage.clear();location.reload();}" style="background:#ff4444;color:#fff">🧹 Reset</button>
+<input type="file" id="f" style="display:none" onchange="restaurar(this)"></div></header>
 <div class="grid" id="grid"></div>
-
 <script>
 const FIXOS=[
-{"n":"📋 DÍVIDAS", "f":"dividas.html","c":"#ffcc00","t":"#000"},
-{"n":"🏦 Bancos", "f":"bancos.html"},
-{"n":"💸 Gastos", "f":"gastos.html"},
-{"n":"💬 Mensagens", "f":"mensagens.html"},
-{"n":"🎵 Musicas", "f":"musicas.html"},
-{"n":"🎬 Videos", "f":"video.html"},
-{"n":"📱 Redes", "f":"redes.html"},
-{"n":"✂️ Tesoura", "f":"tesoura.html"},
-{"n":"🗺️ Mapas", "f":"mapas.html"},
-{"n":"🅿️ Estacionamento", "f":"estacionamento.html"},
-{"n":"🔧 Ferramentas", "f":"ferramentas.html"},
-{"n":"📝 Notas", "f":"notas.html"}
+{n:"📋 DÍVIDAS",f:"dividas.html",c:"#ffcc00",t:"#000"},
+{n:"🏦 Bancos",f:"bancos.html"},
+{n:"💸 Gastos",f:"gastos.html"},
+{n:"💬 Mensagens",f:"mensagens.html"},
+{n:"🎵 Musicas",f:"musicas.html"},
+{n:"🎬 Videos",f:"video.html"},
+{n:"📱 Redes",f:"redes.html"},
+{n:"✂️ Tesoura",f:"tesoura.html"},
+{n:"🗺️ Mapas",f:"mapas.html"},
+{n:"🅿️ Estacionamento",f:"estacionamento.html"},
+{n:"💰 Caixa",f:"caixa.html"},
+{n:"📦 Estoque",f:"estoque.html"},
+{n:"🛒 Mercado",f:"mercado.html"},
 ];
-
-let extras = [];
-try{ extras = JSON.parse(localStorage.getItem('extras_final')) || []; }catch(e){ extras=[]; }
-function save(){ localStorage.setItem('extras_final', JSON.stringify(extras)); }
-
+function getE(){return JSON.parse(localStorage.getItem('extras_final')||'[]')}
+function setE(e){localStorage.setItem('extras_final',JSON.stringify(e))}
 function render(){
-  let g = document.getElementById('grid'); g.innerHTML='';
-  let todos = [...FIXOS,...extras];
-  todos.forEach((a,i)=>{
-    let div = document.createElement('div');
-    div.className='card';
-    div.style.borderColor = a.c || '#333';
-    div.innerHTML=`<div style="font-size:32px">${a.n.split(' ')[0]}</div><b>${a.n}</b><button class="btn" style="background:#111;color:#aaa;border:1px solid #333;margin-top:8px;width:100%" onclick="abrir('${a.f}')">ABRIR</button>` + (i>=FIXOS.length? `<button class="del" onclick="del(${i-FIXOS.length})" style="background:#ff4444;color:#fff;border:none;border-radius:6px;padding:4px 8px;margin-top:6px">Apagar</button>`:'');
-    g.appendChild(div);
-  });
+ let g=document.getElementById('grid');g.innerHTML='';
+ FIXOS.forEach(a=>{g.innerHTML+=`<div class="card"><div style="font-size:32px">${a.n.split(' ')[0]}</div><b>${a.n}</b><button class="btn" style="background:${a.c||'#222'};color:${a.t||'#fff'}" onclick="location.href='${a.f.toLowerCase()}'">Abrir</button><small style="opacity:.3;font-size:9px">${a.f.toLowerCase()}</small></div>`});
+ getE().forEach((a,i)=>{g.innerHTML+=`<div class="card" style="border-color:#00ff88"><button class="del" onclick="delE(${i})">🗑️</button><div style="font-size:32px;margin-top:10px">${a.nome.split(' ')[0]}</div><b>${a.nome}</b><button class="btn" onclick="location.href='${a.file.toLowerCase()}'">Abrir</button><small style="opacity:.3;font-size:9px">${a.file.toLowerCase()}</small></div>`});
 }
-function abrir(f){ location.href=f; }
-function novoApp(){
-  let n=prompt("Nome:"); if(!n) return;
-  let f=prompt("Arquivo ex: notas.html TUDO minusculo:"); if(!f) return;
-  extras.push({n:n, f:f}); save(); render();
-}
-function del(i){ if(confirm("Apagar?")){ extras.splice(i,1); save(); render(); } }
-function backup(){
-  let blob=new Blob([JSON.stringify(extras)],{type:'application/json'});
-  let a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='portal-backup.json'; a.click();
-}
-function restaurar(input){
-  let r=new FileReader();
-  r.onload=function(){
-    try{ let d=JSON.parse(r.target.result); extras=d; save(); render(); }catch(e){ alert("Erro no arquivo"); }
-  };
-  r.readAsText(input.files[0]);
-}
-function compartilhar(){
-  let url=location.href;
-  if(navigator.share){ navigator.share({url:url}); }else{ prompt("Copia:", url); }
-}
-function convidar(){
-  let url=location.href;
-  window.open("https://wa.me/?text="+encodeURIComponent("Meu Portal: "+url));
-}
+function novoApp(){let n=prompt("Nome:");if(!n)return;let f=prompt("Arquivo ex: notas.html TUDO minúsculo");if(!f)return;let e=getE();e.push({nome:n,file:f.toLowerCase()});setE(e);render()}
+function delE(i){if(confirm("Apagar?")){let e=getE();e.splice(i,1);setE(e);render()}}
+function backup(){let b=new Blob([JSON.stringify({extras:getE()})],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='backup.json';a.click()}
+function restaurar(inp){let r=new FileReader();r.onload=e=>{try{let d=JSON.parse(e.target.result);setE(d.extras||[]);render()}catch{alert("Erro")}};r.readAsText(inp.files[0])}
+function compartilhar(){let u=location.href;if(navigator.share)navigator.share({url:u});else prompt("Copia:",u)}
+function convidar(){window.open("https://wa.me/?text="+encodeURIComponent("Meu Portal: "+location.href))}
 render();
-</script>
-</body>
-</html>
+</script></body></html>
