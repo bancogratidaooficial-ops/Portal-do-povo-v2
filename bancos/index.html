@@ -1,1 +1,72 @@
-<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Bancos</title><style>body{background:#0a0a0a;color:#fff;font-family:Arial;padding:15px}a{color:#FFD700}.card{background:#151515;padding:12px;border-radius:10px;margin:8px 0}</style></head><body><h2 style="color:#FFD700">🏦 Bancos e Contas</h2><div class="card">Nubank, Inter, Caixa, BB - Organize seus bancos</div><a href="index.html">◀️ Voltar</a></body></html>
+<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>V17 Cofre de Bancos - Portal do Povo</title>
+<style>body{background:#0a0a0a;color:#fff;font-family:Arial;padding:10px;margin:0}h1{color:#FFD700;font-size:18px;text-align:center;margin:5px}.top{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:8px 0}.top button{padding:8px 10px;border-radius:8px;border:none;font-weight:700;font-size:12px}.card{background:#151515;border:1px solid #2a2a2a;border-radius:14px;padding:10px;display:flex;align-items:center;gap:10px;margin:8px 0}.ico{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}.nome{font-weight:900;font-size:15px;flex:1}.btns{display:flex;gap:5px;flex-wrap:wrap}.b{padding:7px 9px;border-radius:8px;border:none;font-size:12px;font-weight:800}.abrir{background:#222;color:#fff;border:1px solid #444}.inst{background:#0a7f2e;color:#fff}.comp{background:#222;color:#fff}.lixeira{background:#3a0f0f;color:#fff;margin-left:auto;padding:7px 10px;border-radius:8px;border:none}.foot{margin-top:14px;text-align:center}.foot button{width:100%;padding:11px;margin:4px 0;border-radius:8px;border:none}.voltar{background:#111;color:#FFD700;border:1px solid #FFD700!important}</style></head>
+<body>
+<h1>🔐 V17 COFRE DE BANCOS</h1>
+<div class="top">
+<button onclick="bloquear()" style="background:#222;color:#fff">🔒 Bloquear</button>
+<button onclick="compartilharPortal()" style="background:#0b5bd3;color:#fff">📤 Compartilhar</button>
+<button onclick="convidar()" style="background:#0a7f2e;color:#fff">👥 Convidar</button>
+<button onclick="instalarPortal()" style="background:#FFD700;color:#000">📲 Instalar App</button>
+</div>
+<div id="lista"></div>
+<div class="foot">
+<button onclick="addBanco()" style="background:#FFD700;color:#000">➕ ADICIONAR BANCO</button>
+<button onclick="backup()" style="background:#222;color:#fff">💾 BACKUP LOCAIS (buckcap)</button>
+<button onclick="document.getElementById('rest').click()" style="background:#222;color:#fff">♻️ RESTAURAR BACKUP</button><input type="file" id="rest" style="display:none" onchange="restaurar(event)">
+<button onclick="resetar()" style="background:#500;color:#fff">🗑️ RESETAR TUDO</button>
+<a href="index.html"><button class="voltar">◀️ VOLTAR PRO PORTAL DO POVO</button></a>
+</div>
+<script>
+const padrao=[
+{n:'Itaú',ico:'🏦',pkg:'com.itau',play:'com.itau',cor:'#ff6a00'},
+{n:'Santander',ico:'🔴',pkg:'com.santander.app',play:'com.santander.app',cor:'#e00'},
+{n:'Caixa',ico:'🔵',pkg:'br.gov.caixa',play:'br.gov.caixa',cor:'#0066b3'},
+{n:'Bradesco',ico:'🔴',pkg:'com.bradesco',play:'com.bradesco',cor:'#cc092f'},
+{n:'Banco do Brasil',ico:'🟡',pkg:'br.com.bb.android',play:'br.com.bb.android',cor:'#fede00'},
+{n:'Nubank',ico:'💜',pkg:'com.nu.production',play:'com.nu.production',cor:'#820ad1'},
+{n:'Inter',ico:'🧡',pkg:'br.com.intermedium',play:'br.com.intermedium',cor:'#ff7a00'},
+{n:'C6 Bank',ico:'⚫',pkg:'com.c6bank.app',play:'com.c6bank.app',cor:'#222'},
+{n:'PicPay',ico:'💚',pkg:'com.picpay',play:'com.picpay',cor:'#11c76f'},
+{n:'Mercado Pago',ico:'💙',pkg:'com.mercadopago.wallet',play:'com.mercadopago.wallet',cor:'#009ee3'}
+];
+let bancos=JSON.parse(localStorage.getItem('bancos_v17')||'null')||padrao;
+
+function render(){
+let d=document.getElementById('lista');d.innerHTML='';
+bancos.forEach((b,i)=>{
+d.innerHTML+=`<div class="card"><div class="ico" style="background:${b.cor}22">${b.ico}</div><div class="nome">${b.n}<div style="font-weight:400;font-size:11px;color:#aaa">${b.pkg}</div></div><div class="btns"><button class="b abrir" onclick="abrirBanco(${i})">▶️ Abrir</button><button class="b inst" onclick="instalar(${i})">📲 INSTALAR</button><button class="b comp" onclick="share(${i})">📤</button></div><button class="lixeira" onclick="apagar(${i})">🗑️</button></div>`;
+});
+localStorage.setItem('bancos_v17',JSON.stringify(bancos));
+}
+
+// ABRIR DIRETO NO APP SE ESTIVER INSTALADO, SE NÃO VAI PRO PLAY STORE
+function abrirBanco(i){
+let pkg=bancos[i].pkg;
+// Tenta abrir via intent Android
+let intent=`intent://#Intent;package=${pkg};action=android.intent.action.VIEW;end`;
+let start=Date.now();
+window.location.href=intent;
+// Se em 1.2s não abriu, manda pro Play Store
+setTimeout(()=>{
+if(Date.now()-start<1500) instalar(i);
+},1200);
+}
+function instalar(i){
+let play=bancos[i].play;
+// Tenta abrir Play Store app primeiro
+window.location.href=`market://details?id=${play}`;
+// Fallback pro link https se não tiver Play Store
+setTimeout(()=>{window.open(`https://play.google.com/store/apps/details?id=${play}`,'_blank')},800);
+}
+function share(i){if(navigator.share)navigator.share({title:bancos[i].n,text:`Baixa o ${bancos[i].n}: https://play.google.com/store/apps/details?id=${bancos[i].play}`});else{window.open(`https://wa.me/?text=${encodeURIComponent('Baixa '+bancos[i].n+' https://play.google.com/store/apps/details?id='+bancos[i].play)}`)}}
+function apagar(i){if(confirm(`Apagar ${bancos[i].n}?`)){bancos.splice(i,1);render()}}
+function addBanco(){let n=prompt('Nome do banco:');if(!n)return;let pkg=prompt('Package do app (ex: com.itau) ou Play ID:');if(!pkg)return;bancos.push({n:n,ico:'🏦',pkg:pkg,play:pkg,cor:'#333'});render()}
+function backup(){let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(bancos)],{type:'application/json'}));a.download='backup_bancos_v17.json';a.click()}
+function restaurar(e){let f=e.target.files[0];let r=new FileReader();r.onload=ev=>{bancos=JSON.parse(ev.target.result);render()};r.readAsText(f)}
+function resetar(){if(confirm('Resetar tudo e voltar padrão?')){bancos=[...padrao];render()}}
+function compartilharPortal(){if(navigator.share)navigator.share({title:'Portal do Povo',url:location.href});else window.open('https://wa.me/?text='+encodeURIComponent(location.href))}
+function convidar(){window.open('https://wa.me/?text='+encodeURIComponent('Conhece o Portal do Povo com Cofre de Bancos? '+location.href))}
+function instalarPortal(){alert('No Chrome clica nos 3 pontinhos > Instalar app / Adicionar à tela inicial');}
+function bloquear(){document.body.innerHTML='<h1 style="color:#FFD700;text-align:center;margin-top:40vh">🔒 BLOQUEADO<br><button onclick="location.reload()" style="padding:10px;margin-top:20px">Desbloquear</button></h1>'}
+render();
+</script></body></html>
