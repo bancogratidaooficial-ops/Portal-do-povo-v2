@@ -1,0 +1,57 @@
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{font-family:Arial;background:#f0f2f5;padding:8px;margin:0}
+.box{background:#fff;border-radius:12px;padding:12px;max-width:1100px;margin:auto}
+label{font-size:11px;font-weight:bold;color:#1F4E79;display:block;margin-top:6px}
+input,select{width:100%;padding:11px;border:1px solid #ccc;border-radius:8px;font-size:15px;margin-top:3px}
+button{width:100%;padding:13px;border:0;border-radius:8px;color:#fff;font-weight:bold;margin:5px 0;font-size:13px}
+.v{background:#27ae60}.a{background:#1F4E79}.g{background:gray}.r{background:#c0392b}.o{background:#e67e22}.y{background:#f1c40f;color:#000}.p{background:#8e44ad}.b{background:#2980b9}
+table{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px}
+th{background:#1F4E79;color:#fff;padding:6px}td{border:1px solid #ccc;padding:5px;text-align:center}
+.T{background:#C6EFCE}.F{background:#FFC7CE;font-weight:bold}.FM{background:#d6eaf8;font-weight:bold;border:2px solid #2980b9}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.card{border:2px solid #1F4E79;border-radius:10px;padding:10px;background:#f8faff;margin:8px 0}
+.ok{background:#d4edda;padding:10px;border-radius:8px;color:#155724;font-size:12px;margin:6px 0;display:none}
+.warn{background:#fff3cd;padding:10px;border-radius:8px;color:#856404;font-size:11px;margin:6px 0}
+</style></head><body>
+<div class="box">
+<h2 style="text-align:center">ESCALA 5x1 - VERSAO QUE NAO APAGA</h2>
+<div id="msg" class="ok"></div>
+<div class="warn"><b>COMO USAR SEM APAGAR:</b><br>1. Adicione o pessoal e escolha o dia da folga<br>2. Clique em DEFINIR ESCALA QUE INSERI - trava sua escala<br>3. Depois SALVAR DEFINITIVA</div>
+<div class="card" style="background:#e8f8f5;border-color:#1abc9c">
+<label style="color:#1abc9c">✅ TRAVAR SUA ESCALA PERSONALIZADA</label>
+<button class="b" onclick="definirMinhaEscala()">📌 DEFINIR ESCALA QUE EU INSERI - NAO APAGAR MAIS</button>
+<div class="row"><div><label>Data referencia</label><input type="date" id="dataInicio" value="2026-10-04"></div><div><label>Mes travar</label><select id="mesTrava"><option value="10">OUTUBRO 2026</option><option value="9">SETEMBRO</option><option value="11">NOVEMBRO</option></select></div></div>
+</div>
+<div class="card">
+<label>1 - NOME</label><input id="nome" placeholder="Ex: Jose Marcos">
+<label>2 - HORARIO</label><div class="row"><input type="time" id="hin" value="10:00"><input type="time" id="hout" value="18:20"></div>
+<label>3 - TIPO</label><select id="tipo" onchange="trocaTipo()"><option value="5x1">5x1 AUTOMATICO</option><option value="fixa">FOLGA FIXA</option><option value="encarregado">ENCARREGADO Sab Dom</option><option value="folguista">FOLGUISTA MADRUGADA</option><option value="personal">PERSONALIZADA</option></select>
+<div id="areaFixa" style="display:none"><label>DIA FOLGA FIXA</label><select id="diaSemana"><option>Segunda</option><option>Terca</option><option>Quarta</option><option>Quinta</option><option>Sexta</option><option>Sabado</option><option>Domingo</option></select></div>
+<div id="area5x1"><label>ESCOLHA O DIA QUE ELE FOLGA</label><select id="inicioFolga"><option value="0">Folga dias 06,12,18,24,30</option><option value="1">Folga dias 05,11,17,23,29</option><option value="2">Folga dias 04,10,16,22,28</option><option value="3">Folga dias 03,09,15,21,27</option><option value="4">Folga dias 02,08,14,20,26</option><option value="5">Folga dias 01,07,13,19,25,31</option></select></div>
+<div id="areaPers" style="display:none"><label>DIAS QUE FOLGA</label><input id="diasFolga" placeholder="Ex: 5,12,19,26"></div>
+<button class="v" onclick="add()">+ ADICIONAR</button>
+</div>
+<div class="row"><div><label>MES</label><select id="mes" onchange="gerar()"><option value="9">SETEMBRO</option><option value="10" selected>OUTUBRO</option><option value="11">NOVEMBRO</option></select></div><div><label>ANO</label><select id="ano"><option>2026</option></select></div></div>
+<button class="a" onclick="gerar()">GERAR ESCALA AGORA</button>
+<div class="row"><button class="p" onclick="salvarDefinitivo()">💾 SALVAR DEFINITIVA</button><button class="y" onclick="carregarSalvo()">📂 CARREGAR SALVA</button></div>
+<div id="lista" style="background:#eee;padding:8px;border-radius:8px;margin:6px 0;font-size:12px"></div>
+<div style="overflow:auto"><table id="tab"></table></div>
+<div class="row"><button class="o" onclick="exemploSeguro()">CARREGAR EXEMPLO (com confirmacao)</button><button class="a" onclick="window.print()">IMPRIMIR PDF</button></div>
+<button class="r" onclick="limparTudo()">LIMPAR TUDO</button>
+</div>
+<script>
+var funcs=[];var escalaTravada=null;
+function trocaTipo(){var t=document.getElementById('tipo').value;document.getElementById('areaFixa').style.display=t=='fixa'?'block':'none';document.getElementById('areaPers').style.display=t=='personal'?'block':'none';document.getElementById('area5x1').style.display=t=='5x1'?'block':'none';document.getElementById('areaFolguista').style.display=t=='folguista'?'block':'none';if(t=='folguista'){document.getElementById('nome').value='FOLGUISTA DA MADRUGADA';document.getElementById('hin').value='22:40';document.getElementById('hout').value='07:00';}}
+function showMsg(txt){var m=document.getElementById('msg');m.style.display='block';m.innerHTML=txt;setTimeout(()=>{m.style.display='none'},5000);}
+function definirMinhaEscala(){if(funcs.length==0){alert('Adicione funcionarios primeiro!');return}var data=document.getElementById('dataInicio').value;var mesT=document.getElementById('mesTrava').value;escalaTravada={data:data,mes:mesT,definida:true,funcs:JSON.parse(JSON.stringify(funcs))};localStorage.setItem('escalaTravada',JSON.stringify(escalaTravada));localStorage.setItem('funcsEscala',JSON.stringify(funcs));document.getElementById('mes').value=mesT;showMsg('✅ SUA ESCALA FOI DEFINIDA E TRAVADA! Data: '+data+' - Agora ela NAO some mais. Total: '+funcs.length+' funcionarios travados.');gerar();}
+function exemploSeguro(){if(funcs.length>0){if(!confirm('ATENCAO! Voce ja tem '+funcs.length+' funcionarios cadastrados com sua escala ensinada.\\n\\nSe clicar OK, vai APAGAR sua escala atual e carregar o exemplo padrao.\\n\\nQuer mesmo apagar?')){showMsg('❌ Cancelado - Sua escala foi mantida!');return;}}funcs=[{nome:'Natal',hor:'15:20-22:40',tipo:'5x1',inicio:0},{nome:'Kaue',hor:'07:00-15:20',tipo:'5x1',inicio:1},{nome:'Mario (MADRUGADA FIXO)',hor:'22:40-07:00',tipo:'5x1',inicio:2},{nome:'Jose Marcos',hor:'10:00-18:20',tipo:'5x1',inicio:3},{nome:'FOLGUISTA DA MADRUGADA',hor:'22:40-07:00',tipo:'folguista',inicio:2},{nome:'Celio Encarregado',hor:'11:00-19:40',tipo:'encarregado',inicio:0}];escalaTravada={data:document.getElementById('dataInicio').value,definida:true};localStorage.setItem('escalaTravada',JSON.stringify(escalaTravada));lista();gerar();salvarDefinitivo();showMsg('✅ Exemplo carregado!');}
+function salvarDefinitivo(){localStorage.setItem('funcsEscala',JSON.stringify(funcs));if(escalaTravada)localStorage.setItem('escalaTravada',JSON.stringify(escalaTravada));localStorage.setItem('mes',document.getElementById('mes').value);showMsg('✅ SALVO! Pode fechar o app que volta igual.');}
+function carregarSalvo(){var s=localStorage.getItem('funcsEscala');var t=localStorage.getItem('escalaTravada');if(!s){showMsg('❌ Nenhuma salva');return}funcs=JSON.parse(s);if(t)escalaTravada=JSON.parse(t);lista();gerar();showMsg('📂 CARREGADA! '+funcs.length+' funcionarios');}
+function add(){var nome=document.getElementById('nome').value.trim();if(!nome){alert('Digite nome');return}var hin=document.getElementById('hin').value;var hout=document.getElementById('hout').value;var hor=hin+'-'+hout;var tipo=document.getElementById('tipo').value;var diaSemana=document.getElementById('diaSemana').value;var inicio=parseInt(document.getElementById('inicioFolga').value);var diasFolga=document.getElementById('diasFolga').value;funcs.push({nome:nome,hor:hor,tipo:tipo,diaSemana:diaSemana,inicio:inicio,diasFolga:diasFolga});document.getElementById('nome').value='';lista();gerar();localStorage.setItem('funcsEscala',JSON.stringify(funcs));}
+function lista(){var d=document.getElementById('lista');if(funcs.length==0){d.innerHTML='Nenhum funcionario';return}var t='Adicionados: '+funcs.length+'<br>';for(var i=0;i<funcs.length;i++){var f=funcs[i];t+=(i+1)+'. '+f.nome+' | '+f.hor+' | '+f.tipo+' <a href="#" onclick="rem('+i+')">[X]</a><br>';}if(escalaTravada&&escalaTravada.definida)t+='<br><b style=color:green>📌 SUA ESCALA DEFINIDA E TRAVADA em: '+escalaTravada.data+' - Nao apaga mais!</b>';else t+='<br><b style=color:red>⚠️ Ainda nao definida - Clique em DEFINIR ESCALA QUE EU INSERI pra travar</b>';d.innerHTML=t;}
+function rem(i){funcs.splice(i,1);lista();gerar();localStorage.setItem('funcsEscala',JSON.stringify(funcs));}
+function limparTudo(){if(confirm('Apagar tudo mesmo?')){funcs=[];escalaTravada=null;localStorage.removeItem('funcsEscala');localStorage.removeItem('escalaTravada');lista();gerar();}}
+function gerar(){var mes=parseInt(document.getElementById('mes').value);var ano=parseInt(document.getElementById('ano').value);var dias=new Date(ano,mes,0).getDate();var tab=document.getElementById('tab');if(funcs.length==0){tab.innerHTML='<tr><td>Adicione</td></tr>';return}var dsem=['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];var h='<tr><th>Nome</th><th>Horario</th><th>Tipo</th>';for(var d=1;d<=dias;d++){var dt=new Date(ano,mes-1,d);h+='<th>'+d+'/'+mes+'<br>'+dsem[dt.getDay()]+'</th>';}h+='</tr>';var madrugadaFixo=null;for(var i=0;i<funcs.length;i++){if(funcs[i].nome.toLowerCase().includes('mario')){madrugadaFixo=funcs[i];break;}}for(var i=0;i<funcs.length;i++){var f=funcs[i];h+='<tr><td><b>'+f.nome+'</b></td><td><small>'+f.hor+'</small></td><td><small>'+f.tipo+'</small></td>';for(var d=1;d<=dias;d++){var dt=new Date(ano,mes-1,d);var wd=dt.getDay();if(f.tipo=='encarregado'){if(wd==0||wd==6)h+="<td class='F'>F</td>";else h+="<td class='T'>T</td>";}else if(f.tipo=='fixa'){var mapa=['Domingo','Segunda','Terca','Quarta','Quinta','Sexta','Sabado'];if(mapa[wd]==f.diaSemana)h+="<td class='F'>F</td>";else h+="<td class='T'>T</td>";}else if(f.tipo=='personal'){var ld=f.diasFolga.split(',').map(s=>parseInt(s.trim()));if(ld.includes(d))h+="<td class='F'>F</td>";else h+="<td class='T'>T</td>";}else if(f.tipo=='folguista'){if(madrugadaFixo){var folgaM=(d+madrugadaFixo.inicio)%6==0;if(folgaM)h+="<td class='FM'>T<br><span style=font-size:8px>COBRE</span></td>";else h+="<td style=background:#eee>-</td>";}else{if((d+f.inicio)%6==0)h+="<td class='FM'>T</td>";else h+="<td style=background:#eee>-</td>";}}else{if((d+f.inicio)%6==0)h+="<td class='F'>F</td>";else h+="<td class='T'>T</td>";}}h+='</tr>';}tab.innerHTML=h;}
+window.onload=function(){var s=localStorage.getItem('funcsEscala');var t=localStorage.getItem('escalaTravada');if(s){funcs=JSON.parse(s);if(t)escalaTravada=JSON.parse(t);lista();gerar();showMsg('📂 Sua escala recuperada! Travada em: '+(escalaTravada?escalaTravada.data:''));}trocaTipo();}
+</script></body></html>
