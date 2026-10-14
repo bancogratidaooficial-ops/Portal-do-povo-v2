@@ -1,43 +1,90 @@
-<!DOCTYPE html><html lang="pt-BR"><head><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2263470788888608"crossorigin="anonymous"></script>
- <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Portal - Corrigido Maiúsculas</title>
-<style>body{margin:0;background:#0a0a0a;color:#fff;font-family:Arial;padding:10px}header{text-align:center;background:#111;border:2px solid #ffcc00;border-radius:14px;padding:12px;margin-bottom:10px}.topBtns{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:10px}.topBtns button{padding:10px;border-radius:10px;border:none;font-weight:bold;font-size:12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card{background:#1a1a1a;border-radius:14px;padding:14px;text-align:center;position:relative;border:1px solid #222}.del{position:absolute;top:6px;right:6px;background:#ff4444;color:#fff;border:none;border-radius:50%;width:26px;height:26px}.btn{width:100%;padding:11px;border-radius:10px;border:none;font-weight:bold;margin-top:6px}</style></head><body>
-<header><h1 style="color:#ffcc00;margin:0">📋 MEU PORTAL - BANCO GRATIDÃO</h1><div class="topBtns">
-<button onclick="novoApp()" style="background:#00ff88;color:#000">+ NOVO APP</button>
-<button onclick="compartilhar()" style="background:#00aaff;color:#fff">📤 Compartilhar</button>
-<button onclick="convidar()" style="background:#ffcc00;color:#000">👥 Convidar</button>
-<button onclick="backup()" style="background:#8888ff;color:#fff">💾 Backup</button>
-<button onclick="document.getElementById('f').click()" style="background:#fff;color:#000">♻️ Restaurar</button>
-<button onclick="if(confirm('Limpar duplicados com maiúscula?')){localStorage.clear();location.reload();}" style="background:#ff4444;color:#fff">🧹 Reset</button>
-<input type="file" id="f" style="display:none" onchange="restaurar(this)"></div></header>
-<div class="grid" id="grid"></div>
-<script>
-const FIXOS=[
-{n:"📋 DÍVIDAS",f:"dividas.html",c:"#ffcc00",t:"#000"},
-{n:"🏦 Bancos",f:"bancos.html"},
-{n:"💸 Gastos",f:"gastos.html"},
-{n:"💬 Mensagens",f:"mensagens.html"},
-{n:"🎵 Musicas",f:"musicas.html"},
-{n:"🎬 Videos",f:"video.html"},
-{n:"📱 Redes",f:"redes.html"},
-{n:"✂️ Tesoura",f:"tesoura.html"},
-{n:"🗺️ Mapas",f:"mapas.html"},
-{n:"🅿️ Estacionamento",f:"estacionamento.html"},
-{n:"💰 Caixa",f:"caixa.html"},
-{n:"📦 Estoque",f:"estoque.html"},
-{n:"🛒 Mercado",f:"mercado.html"},
-];
-function getE(){return JSON.parse(localStorage.getItem('extras_final')||'[]')}
-function setE(e){localStorage.setItem('extras_final',JSON.stringify(e))}
-function render(){
- let g=document.getElementById('grid');g.innerHTML='';
- FIXOS.forEach(a=>{g.innerHTML+=`<div class="card"><div style="font-size:32px">${a.n.split(' ')[0]}</div><b>${a.n}</b><button class="btn" style="background:${a.c||'#222'};color:${a.t||'#fff'}" onclick="location.href='${a.f.toLowerCase()}'">Abrir</button><small style="opacity:.3;font-size:9px">${a.f.toLowerCase()}</small></div>`});
- getE().forEach((a,i)=>{g.innerHTML+=`<div class="card" style="border-color:#00ff88"><button class="del" onclick="delE(${i})">🗑️</button><div style="font-size:32px;margin-top:10px">${a.nome.split(' ')[0]}</div><b>${a.nome}</b><button class="btn" onclick="location.href='${a.file.toLowerCase()}'">Abrir</button><small style="opacity:.3;font-size:9px">${a.file.toLowerCase()}</small></div>`});
-}
-function novoApp(){let n=prompt("Nome:");if(!n)return;let f=prompt("Arquivo ex: notas.html TUDO minúsculo");if(!f)return;let e=getE();e.push({nome:n,file:f.toLowerCase()});setE(e);render()}
-function delE(i){if(confirm("Apagar?")){let e=getE();e.splice(i,1);setE(e);render()}}
-function backup(){let b=new Blob([JSON.stringify({extras:getE()})],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='backup.json';a.click()}
-function restaurar(inp){let r=new FileReader();r.onload=e=>{try{let d=JSON.parse(e.target.result);setE(d.extras||[]);render()}catch{alert("Erro")}};r.readAsText(inp.files[0])}
-function compartilhar(){let u=location.href;if(navigator.share)navigator.share({url:u});else prompt("Copia:",u)}
-function convidar(){window.open("https://wa.me/?text="+encodeURIComponent("Meu Portal: "+location.href))}
-render();
-</script></body></html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BANCO GRATIDÃO OFICIAL</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;color:#fff;font-family:Arial}
+header{background:#000;padding:14px;text-align:center;border-bottom:2px solid #ffcc00;position:sticky;top:0;z-index:10}
+header b{color:#ffcc00;font-size:20px;display:block}
+header span{font-size:11px;color:#888}
+.cat{padding:18px 12px 6px;color:#ffcc00;font-weight:800;font-size:13px;display:flex;align-items:center;gap:6px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 12px}
+@media(min-width:600px){.grid{grid-template-columns:1fr 1fr 1fr}}
+.btn{background:#161616;border:1px solid #222;border-radius:14px;padding:14px 8px;text-align:center;text-decoration:none;color:#fff;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:80px;justify-content:center}
+.btn b{font-size:12px}
+.btn .ic{font-size:22px}
+.btn-destaque{border-color:#ffcc00;background:#1a1600}
+.btn-green{border-color:#00ff88;background:#001a0f}
+.btn-blue{border-color:#3b82f6;background:#000e1a}
+.btn-amarelo{color:#ffcc00}
+</style>
+</head>
+<body>
+
+<header>
+<b>BANCO GRATIDÃO OFICIAL</b>
+<span>Portal do Povo - Tudo em um só lugar - 20 anos de gratidão</span>
+</header>
+
+<div class="cat">💼 TRABALHO E ESTUDO</div>
+<div class="grid">
+<a class="btn btn-destaque" href="vagas/index.html"><span class="ic">💼</span><b>VAGAS DE EMPREGO</b></a>
+<a class="btn btn-destaque" href="cursos/index.html"><span class="ic">🎓</span><b>CURSOS GRÁTIS</b></a>
+<a class="btn" href="enem/index.html"><span class="ic">📚</span><b class="btn-amarelo">ENEM</b></a>
+<a class="btn" href="materias/index.html"><span class="ic">📖</span><b class="btn-amarelo">MATÉRIAS</b></a>
+</div>
+
+<div class="cat">🏥 SAÚDE E CIDADE</div>
+<div class="grid">
+<a class="btn" href="saude/index.html"><span class="ic">🩺</span><b>SAÚDE</b></a>
+<a class="btn" href="onibus/index.html"><span class="ic">🚌</span><b>ÔNIBUS</b></a>
+<a class="btn" href="emergencias/index.html"><span class="ic">🚨</span><b>EMERGÊNCIAS</b></a>
+<a class="btn" href="mapas/index.html"><span class="ic">🗺️</span><b class="btn-amarelo">MAPAS</b></a>
+<a class="btn" href="orgaos-publicos/index.html"><span class="ic">🏛️</span><b>ÓRGÃOS PÚBLICOS</b></a>
+<a class="btn" href="estacionamento/index.html"><span class="ic">🅿️</span><b class="btn-amarelo">ESTACIONAMENTO P1-4</b></a>
+</div>
+
+<div class="cat">🏠 CASA E DINHEIRO</div>
+<div class="grid">
+<a class="btn" href="caixa/index.html"><span class="ic">💰</span><b class="btn-amarelo">CAIXA</b></a>
+<a class="btn" href="estoque/index.html"><span class="ic">📦</span><b class="btn-amarelo">ESTOQUE</b></a>
+<a class="btn" href="gastos/index.html"><span class="ic">💸</span><b class="btn-amarelo">GASTOS</b></a>
+<a class="btn" href="dividas/index.html"><span class="ic">📋</span><b class="btn-amarelo">DIVIDAS</b></a>
+<a class="btn" href="mercado/index.html"><span class="ic">🛒</span><b class="btn-amarelo">MERCADO</b></a>
+<a class="btn" href="bancos/index.html"><span class="ic">🏦</span><b class="btn-amarelo">BANCOS</b></a>
+<a class="btn" href="classificados/index.html"><span class="ic">🛍️</span><b>CLASSIFICADOS</b></a>
+</div>
+
+<div class="cat">✝️ FÉ E CONHECIMENTO</div>
+<div class="grid">
+<a class="btn" href="biblia/index.html"><span class="ic">📖</span><b>BIBLIA</b></a>
+<a class="btn" href="biblia-curiosidades/index.html"><span class="ic">✨</span><b>BIBLIA CURIOSIDADES</b></a>
+<a class="btn" href="harpa-crista/index.html"><span class="ic">🎵</span><b>HARPA CRISTÃ</b></a>
+<a class="btn" href="escalas/index.html"><span class="ic">⚖️</span><b>ESCALAS</b></a>
+</div>
+
+<div class="cat">🎬 LAZER E UTILIDADES</div>
+<div class="grid">
+<a class="btn" href="filmes/index.html"><span class="ic">🎬</span><b class="btn-amarelo">FILMES / GRATIFLIX</b></a>
+<a class="btn" href="musicas/index.html"><span class="ic">🎶</span><b class="btn-amarelo">MUSICAS</b></a>
+<a class="btn" href="video/index.html"><span class="ic">🎥</span><b>video</b></a>
+<a class="btn" href="viagens-no-tempo/index.html"><span class="ic">⏳</span><b class="btn-amarelo">VIAGENS NO TEMPO</b></a>
+<a class="btn" href="sites-uteis/index.html"><span class="ic">🌐</span><b>SITES ÚTEIS</b></a>
+<a class="btn" href="mensagens/index.html"><span class="ic">💌</span><b class="btn-amarelo">MENSAGENS</b></a>
+</div>
+
+<div class="cat">⚙️ SISTEMA</div>
+<div class="grid">
+<a class="btn btn-green" href="backup/index.html"><span class="ic">💾</span><b>BACKUP TOTAL - BAIXAR</b></a>
+<a class="btn btn-blue" href="backup-drive/index.html"><span class="ic">☁️</span><b>BACKUP DRIVE AUTOMÁTICO</b></a>
+<a class="btn" href="sobre/index.html"><span class="ic">ℹ️</span><b class="btn-amarelo">SOBRE</b></a>
+<a class="btn" href="contato/index.html"><span class="ic">📞</span><b class="btn-amarelo">CONTATO</b></a>
+</div>
+
+<div style="padding:20px;text-align:center;color:#444;font-size:10px">Banco Gratidão Oficial - 20 anos de gratidão<br>31 serviços em um só lugar</div>
+
+</body>
+</html>
